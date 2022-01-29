@@ -1,16 +1,28 @@
 import os
-
-from fastapi import FastAPI
 from dotenv import load_dotenv
 import boto3
+
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+
 
 app = FastAPI()
 load_dotenv(verbose=True)
 
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.get("/")
 async def root():
-    return {"Table status:":"Hello"}
+    return {"Table status:": "Hello"}
+
+
+@app.get("/items/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: str):
+    return templates.TemplateResponse("item.html", {"request": request, "id": id})
 
 
 @app.get("/create")

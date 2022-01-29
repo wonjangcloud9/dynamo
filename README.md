@@ -1,1 +1,1 @@
-# dynamo
+# dynamoDB & Lambda 🇰🇷 🔥 🚀
