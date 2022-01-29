@@ -7,12 +7,14 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-
 app = FastAPI()
 load_dotenv(verbose=True)
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+dynamodb = boto3.resource('dynamodb', region_name=os.environ.get("BOTO3_REGION"),
+                          aws_access_key_id=os.environ.get("BOTO3_ID"),
+                          aws_secret_access_key=os.environ.get("BOTO3_PW"))
 
 
 @app.get("/")
@@ -32,9 +34,6 @@ async def create():
 
 
 def create_movie_table():
-    dynamodb = boto3.resource('dynamodb', region_name=os.environ.get("BOTO3_REGION"),
-                              aws_access_key_id=os.environ.get("BOTO3_ID"),
-                              aws_secret_access_key=os.environ.get("BOTO3_PW"))
     table = dynamodb.create_table(
         TableName='Movies',
         KeySchema=[
@@ -64,3 +63,16 @@ def create_movie_table():
         }
     )
     return table
+
+
+@app.get("/item")
+def make_item():
+    table = dynamodb.Table('DemoUsers')
+    response = table.put_item(
+        Item={
+            'name': "wonjang2",
+            'email': "test@naver.com",
+            'phone': "01022490109",
+        }
+    )
+    return response
