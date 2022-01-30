@@ -70,9 +70,18 @@ def make_item():
     table = dynamodb.Table('DemoUsers')
     response = table.put_item(
         Item={
-            'name': "wonjang2",
-            'email': "test@naver.com",
-            'phone': "01022490109",
+            'name': "wonjang3",
+            'email': "test2@naver.com",
+            'phone': "01022490110",
         }
     )
     return response
+
+
+@app.get("/itemup")
+def make_item():
+    table = dynamodb.Table('DemoUsers')
+    response = table.get_item(Key={'name': "wonjang3"})
+    if response['Item'] is None:
+        return {"no":"no"}
+    return response["Item"]
